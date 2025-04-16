@@ -3,13 +3,12 @@ import kociemba
 class CubeSolver:
 
     def __init__(self):
-        self.cube = new Cube()
+        self.cube_string = "UBRWBYRGYORWBGROYWBWBOGYRBWRGOBYRGBWORYOGBWYROOGYBWDGBROYRWB"
 
-        solution =
+        self.cube = Cube(cube_string)
 
 
-
-    ## Sets up the cube based on a given string
+    # Sets up the cube based on the given string
     def set_cube(self, cube_string: str):
         if is_valid_cube(cube_string):
             for i, face in enumerate(['U', 'R', 'F', 'D', 'L', 'B']):
@@ -26,9 +25,4 @@ class CubeSolver:
 
 
 
-    def rotate_face(self, face, clockwise=True):
-        face.rotate(clockwise)
-    ## need to change the other adjancent faces accordingly
-
-    def solve(self):
-
+    

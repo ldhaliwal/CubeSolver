@@ -1,38 +1,29 @@
 class Cube:
-    def __init__(self):
-        self.neighbors = {
-            'U': ['L', 'B', 'R', 'F'],
-            'D': ['L', 'B', 'R', 'F'],
-            'F': ['L', 'U', 'R', 'D'],
-            'B': ['L', 'U', 'R', 'D'],
-            'L': ['U', 'F', 'D', 'B'],
-            'R': ['U', 'F', 'D', 'B']
+    def __init__(self, state):
+
+        if len(state) != 54:
+            raise ValueError("wrong input")
+
+        face_mapping = {
+            'U': [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)],  # Up face
+            'R': [(0, 2), (1, 2), (2, 2), (3, 5), (4, 5), (5, 5), (6, 2), (7, 2), (8, 2)],  # Right face
+            'F': [(2, 0), (2, 1), (2, 2), (5, 3), (5, 4), (5, 5), (8, 0), (8, 1), (8, 2)],  # Front face
+            'D': [(6, 0), (6, 1), (6, 2), (7, 0), (7, 1), (7, 2), (8, 0), (8, 1), (8, 2)],  # Down face
+            'L': [(0, 0), (1, 0), (2, 0), (3, 3), (4, 3), (5, 3), (6, 0), (7, 0), (8, 0)],  # Left face
+            'B': [(0, 2), (0, 1), (0, 0), (3, 0), (3, 1), (3, 2), (6, 2), (6, 1), (6, 0)],  # Back face
         }
 
-        # Initialize a blank cube: each face is a 3x3 list filled with '-'
-        self.faces = {
-            'U': Face('U', neighbors),
-            'D': Face('D', neighbors),
-            'F': Face('F', neighbors),
-            'B': Face('B', neighbors),
-            'L': Face('L', neighbors),
-            'R': Face('R', neighbors)
-        }
+        face_names = ['U', 'R', 'F', 'D', 'L', 'B']
+        self.faces = {}
+        color_index = 0
+        for face_name in face_names:
+            squares = []
+            for _ in range(9):
+                squares.append(state[color_index])
+                color_index += 1
+            self.faces[face_name] = Face(face_name, squares)
 
-        self.affected_neighbors = {
-            'U': {faces['L'][0], faces['B'][0], faces['R'][0], faces['F'][0]},
-            'D': {faces['L'][2], faces['B'][2], faces['R'][2], faces['F'][2]},
-            'F': {faces['L'][0][2]+faces['L'][1][2]+faces['L'][2][2], faces['U'][2], faces['R'][0][0]+faces['R'][1][0]+faces['R'][2][0], faces['D'][0]},
-            'B': {faces['L'][0][0]+faces['L'][1][0]+faces['L'][2][0], faces['U'][0], faces['R'][0][2]+faces['R'][1][2]+faces['R'][2][2], faces['D'][2]},
-            'L': {faces['U'][0][0]+faces['U'][1][0]+faces['U'][2][0],
-                  faces['F'][0][0]+faces['F'][1][0]+faces['F'][2][0],
-                  faces['D'][0][0]+faces['D'][1][0]+faces['D'][2][0],
-                  faces['B'][0][2]+faces['B'][1][2]+faces['B'][2][2]},
-            'R': {faces['U'][0][2] + faces['U'][1][2] + faces['U'][2][2],
-                  faces['F'][0][2] + faces['F'][1][2] + faces['F'][2][2],
-                  faces['D'][0][2] + faces['D'][1][2] + faces['D'][2][2],
-                  faces['B'][0][0] + faces['B'][1][0] + faces['B'][2][0]}
-        }
+
 
     def get_face(self, face):
         return self.faces[face]
@@ -45,3 +36,155 @@ class Cube:
         flat = [c for face in self.faces.values() for row in face for c in row]
         count = Counter(flat)
         return all(i == 9 for i in count.values()) and len(count) == 6
+
+    def move(self, move_str):
+        face_name = move_str[0]
+
+        # 1 = clockwise, -1 = counterclockwise
+        direction = 1
+        turns = 1
+
+        if len(move_str) > 1:
+            if move_str[1] == "'":
+                direction = -1
+            elif move_str[1] == "2":
+                turns = 2
+
+        # Get the face
+        face = self.faces.get(face_name)
+        if face is None:
+            raise ValueError(f"Invalid move")
+
+        # Rotate the face
+        for _ in range(turns):
+            face.rotate(clockwise=(direction == 1))
+
+        self.update_adjacent_faces(face_name, direction, turns)
+
+    def update_adjacent_faces(self, face_name, direction, turns):
+        if face_name == 'F':
+            if direction == 1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['U'].squares[6:9] = l_squares[2:5]
+                    self.faces['R'].squares[0:3] = u_squares[6:9]
+                    self.faces['D'].squares[0:3] = r_squares[6:9]
+                    self.faces['L'].squares[2:5] = d_squares[0:3]
+            elif direction == -1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['U'].squares[6:9] = r_squares[0:3]
+                    self.faces['R'].squares[0:3] = d_squares[0:3]
+                    self.faces['D'].squares[0:3] = l_squares[2:5]
+                    self.faces['L'].squares[2:5] = u_squares[6:9]
+        elif face_name == 'B':
+            if direction == 1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['U'].squares[0:3] = r_squares[2:5]
+                    self.faces['R'].squares[2:5] = d_squares[6:9]
+                    self.faces['D'].squares[6:9] = l_squares[0:3]
+                    self.faces['L'].squares[0:3] = u_squares[0:3]
+            elif direction == -1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['U'].squares[0:3] = l_squares[0:3]
+                    self.faces['L'].squares[0:3] = d_squares[6:9]
+                    self.faces['D'].squares[6:9] = r_squares[2:5]
+                    self.faces['R'].squares[2:5] = u_squares[0:3]
+        elif face_name == 'U':
+            if direction == 1:
+                for _ in range(turns):
+                    f_squares = self.faces['F'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['F'].squares[0:3] = r_squares[0:3]
+                    self.faces['R'].squares[0:3] = b_squares[0:3]
+                    self.faces['B'].squares[0:3] = l_squares[0:3]
+                    self.faces['L'].squares[0:3] = f_squares[0:3]
+            elif direction == -1:
+                for _ in range(turns):
+                    f_squares = self.faces['F'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['F'].squares[0:3] = l_squares[0:3]
+                    self.faces['L'].squares[0:3] = b_squares[0:3]
+                    self.faces['B'].squares[0:3] = r_squares[0:3]
+                    self.faces['R'].squares[0:3] = f_squares[0:3]
+        elif face_name == 'D':
+            if direction == 1:
+                for _ in range(turns):
+                    f_squares = self.faces['F'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['F'].squares[6:9] = l_squares[6:9]
+                    self.faces['L'].squares[6:9] = b_squares[6:9]
+                    self.faces['B'].squares[6:9] = r_squares[6:9]
+                    self.faces['R'].squares[6:9] = f_squares[6:9]
+            elif direction == -1:
+                for _ in range(turns):
+                    f_squares = self.faces['F'].squares[:]
+                    r_squares = self.faces['R'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    l_squares = self.faces['L'].squares[:]
+                    self.faces['F'].squares[6:9] = r_squares[6:9]
+                    self.faces['R'].squares[6:9] = b_squares[6:9]
+                    self.faces['B'].squares[6:9] = l_squares[6:9]
+                    self.faces['L'].squares[6:9] = f_squares[6:9]
+        elif face_name == 'R':
+            if direction == 1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    f_squares = self.faces['F'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    self.faces['U'].squares[2:9:3] = f_squares[2:9:3]
+                    self.faces['F'].squares[2:9:3] = d_squares[2:9:3]
+                    self.faces['D'].squares[2:9:3] = b_squares[6:0:-3]
+                    self.faces['B'].squares[6:0:-3] = u_squares[2:9:3]
+            elif direction == -1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    f_squares = self.faces['F'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    self.faces['U'].squares[2:9:3] = b_squares[6:0:-3]
+                    self.faces['B'].squares[6:0:-3] = d_squares[2:9:3]
+                    self.faces['D'].squares[2:9:3] = f_squares[2:9:3]
+                    self.faces['F'].squares[2:9:3] = u_squares[2:9:3]
+        elif face_name == 'L':
+            if direction == 1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    f_squares = self.faces['F'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    self.faces['U'].squares[0:7:3] = b_squares[2:8:3]
+                    self.faces['B'].squares[2:8:3] = d_squares[0:7:3]
+                    self.faces['D'].squares[0:7:3] = f_squares[0:7:3]
+                    self.faces['F'].squares[0:7:3] = u_squares[0:7:3]
+            elif direction == -1:
+                for _ in range(turns):
+                    u_squares = self.faces['U'].squares[:]
+                    f_squares = self.faces['F'].squares[:]
+                    d_squares = self.faces['D'].squares[:]
+                    b_squares = self.faces['B'].squares[:]
+                    self.faces['U'].squares[0:7:3] = f_squares[0:7:3]
+                    self.faces['F'].squares[0:7:3] = d_squares[0:7:3]
+                    self.faces['D'].squares[0:7:3] = b_squares[2:8:3]
+                    self.faces['B'].squares[2:8:3] = u_squares[0:7:3]
