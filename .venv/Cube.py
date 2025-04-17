@@ -1,7 +1,10 @@
+from Face import Face
+
 class Cube:
     def __init__(self, state):
 
         if len(state) != 54:
+            print(len(state))
             raise ValueError("wrong input")
 
         face_mapping = {
@@ -22,8 +25,6 @@ class Cube:
                 squares.append(state[color_index])
                 color_index += 1
             self.faces[face_name] = Face(face_name, squares)
-
-
 
     def get_face(self, face):
         return self.faces[face]
@@ -149,14 +150,16 @@ class Cube:
         elif face_name == 'R':
             if direction == 1:
                 for _ in range(turns):
-                    u_squares = self.faces['U'].squares[:]
-                    f_squares = self.faces['F'].squares[:]
-                    d_squares = self.faces['D'].squares[:]
-                    b_squares = self.faces['B'].squares[:]
-                    self.faces['U'].squares[2:9:3] = f_squares[2:9:3]
-                    self.faces['F'].squares[2:9:3] = d_squares[2:9:3]
-                    self.faces['D'].squares[2:9:3] = b_squares[6:0:-3]
-                    self.faces['B'].squares[6:0:-3] = u_squares[2:9:3]
+                    u_squares = self.faces['U'].squares[2:9:3]
+                    f_squares = self.faces['F'].squares[2:9:3]
+                    d_squares = self.faces['D'].squares[2:9:3]
+                    b_squares = reversed(self.faces['B'].squares[0:7:3])
+                    self.faces['U'].squares[2:9:3] = f_squares
+                    self.faces['F'].squares[2:9:3] = d_squares
+                    self.faces['D'].squares[2:9:3] = b_squares
+                    self.faces['B'].squares[0] = u_squares[0]
+                    self.faces['B'].squares[3] = u_squares[1]
+                    self.faces['B'].squares[7] = u_squares[2]
             elif direction == -1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[:]
@@ -188,3 +191,5 @@ class Cube:
                     self.faces['F'].squares[0:7:3] = d_squares[0:7:3]
                     self.faces['D'].squares[0:7:3] = b_squares[2:8:3]
                     self.faces['B'].squares[2:8:3] = u_squares[0:7:3]
+
+        print
