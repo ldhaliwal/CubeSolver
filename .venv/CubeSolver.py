@@ -22,7 +22,13 @@ class CubeSolver:
 
     def get_string(self) -> str:
         face_order = ['U', 'R', 'F', 'D', 'L', 'B']
-        return ''.join(self.cube.faces[face][i][j] for face in face_order for i in range(3) for j in range(3))
+        string = ""
+        for face in face_order:
+            for i in range(3):
+                for j in range(3):
+                    string += self.cube.faces[face][i][j]
+
+        return string
 
 
 if __name__ == "__main__":
