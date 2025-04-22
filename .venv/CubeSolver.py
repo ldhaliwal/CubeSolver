@@ -4,7 +4,7 @@ from Cube import Cube
 class CubeSolver:
 
     def __init__(self):
-        self.cube_string = "WWWWWWWWWOOOROBGROBBBBBGROOYBYGYYBYBRRRGRRROGGGGYGYYOY"
+        self.cube_string = "WWWWWWWWWGGGGGGGGGOOOOOOOOOYYYYYYYYYBBBBBBBBBRRRRRRRRR"
 
         self.cube = Cube(self.cube_string)
 
@@ -26,7 +26,7 @@ class CubeSolver:
         for face in face_order:
             for i in range(3):
                 for j in range(3):
-                    string += self.cube.faces[face][i][j]
+                    string += self.cube.get_face(face)[i][j]
 
         return string
 

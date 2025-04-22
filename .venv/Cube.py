@@ -27,7 +27,7 @@ class Cube:
             self.faces[face_name] = Face(face_name, squares)
 
     def get_face(self, face):
-        return self.faces[face]
+        return self.faces[face].get_grid()
 
     def get_affected_faces(self, face):
         return [self.faces[n] for n in self.neighbors[face]]
@@ -167,8 +167,9 @@ class Cube:
                     d_squares = self.faces['D'].squares[2:9:3]
                     b_squares = reversed(self.faces['B'].squares[0:7:3])
                     self.faces['U'].squares[2:9:3] = b_squares
-                    ## FIX vv
-                    self.faces['B'].squares[6:0:-3] = d_squares
+                    self.faces['B'].squares[0] = d_squares[8]
+                    self.faces['B'].squares[3] = d_squares[5]
+                    self.faces['B'].squares[7] = d_squares[2]
                     self.faces['D'].squares[2:9:3] = f_squares
                     self.faces['F'].squares[2:9:3] = u_squares
         elif face_name == 'L':
