@@ -30,6 +30,13 @@ class CubeSolver:
 
         return string
 
+    def get_grid(self):
+        string = self.get_string()
+
+        grid = [list(string[i * 9:(i + 1) * 9]) for i in range(6)]
+        grid = [[face[i:i + 3] for i in range(0, 9, 3)] for face in grid]
+        return grid
+
 
 if __name__ == "__main__":
     solver = CubeSolver()
@@ -37,9 +44,9 @@ if __name__ == "__main__":
 
     moves = ["R", "U'", "F2"]
     for move in moves:
-        print(f"Move {move}:")
+        print(f"Move {move}")
         solver.cube.move(move)
-        print(f"After move {move}:", solver.get_string())
+        print(f"After move {move}:", solver.get_grid())
 
 
     
