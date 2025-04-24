@@ -41,8 +41,9 @@ class CubeSolver:
 if __name__ == "__main__":
     solver = CubeSolver()
     print("Initial state:", solver.cube_string)
+    print("face order: U R F D L B")
 
-    moves = ["R", "U'", "F2"]
+    moves = ["B'"]
     for move in moves:
         print(f"Move {move}")
         solver.cube.move(move)

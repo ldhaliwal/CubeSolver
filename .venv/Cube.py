@@ -67,44 +67,44 @@ class Cube:
             if direction == 1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[6:9]
-                    r_squares = self.faces['R'].squares[6:9]
+                    r_squares = self.faces['R'].squares[0:7:3]
                     d_squares = self.faces['D'].squares[0:3]
-                    l_squares = self.faces['L'].squares[2:5]
+                    l_squares = self.faces['L'].squares[2:9:3]
                     self.faces['U'].squares[6:9] = l_squares
-                    self.faces['R'].squares[0:3] = u_squares
+                    self.faces['R'].squares[0:7:3] = u_squares
                     self.faces['D'].squares[0:3] = r_squares
-                    self.faces['L'].squares[2:5] = d_squares
+                    self.faces['L'].squares[2:9:3] = d_squares
             elif direction == -1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[6:9]
-                    r_squares = self.faces['R'].squares[0:3]
+                    r_squares = self.faces['R'].squares[0:7:3]
                     d_squares = self.faces['D'].squares[0:3]
-                    l_squares = self.faces['L'].squares[2:5]
+                    l_squares = self.faces['L'].squares[2:9:3]
                     self.faces['U'].squares[6:9] = r_squares
-                    self.faces['R'].squares[0:3] = d_squares
+                    self.faces['R'].squares[0:7:3] = d_squares
                     self.faces['D'].squares[0:3] = l_squares
-                    self.faces['L'].squares[2:5] = u_squares
+                    self.faces['L'].squares[2:9:3] = u_squares
         elif face_name == 'B':
             if direction == 1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[0:3]
-                    r_squares = self.faces['R'].squares[2:5]
+                    r_squares = self.faces['R'].squares[2:9:3]
                     d_squares = self.faces['D'].squares[6:9]
-                    l_squares = self.faces['L'].squares[0:3]
+                    l_squares = self.faces['L'].squares[0:7:3]
                     self.faces['U'].squares[0:3] = r_squares
-                    self.faces['R'].squares[2:5] = d_squares
+                    self.faces['R'].squares[2:9:3] = d_squares
                     self.faces['D'].squares[6:9] = l_squares
-                    self.faces['L'].squares[0:3] = u_squares
+                    self.faces['L'].squares[0:7:3] = u_squares
             elif direction == -1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[0:3]
-                    r_squares = self.faces['R'].squares[2:5]
+                    r_squares = self.faces['R'].squares[2:9:3]
                     d_squares = self.faces['D'].squares[6:9]
-                    l_squares = self.faces['L'].squares[0:3]
+                    l_squares = self.faces['L'].squares[0:7:3]
                     self.faces['U'].squares[0:3] = l_squares
-                    self.faces['L'].squares[0:3] = d_squares
+                    self.faces['L'].squares[0:7:3] = d_squares
                     self.faces['D'].squares[6:9] = r_squares
-                    self.faces['R'].squares[2:5] = u_squares
+                    self.faces['R'].squares[2:9:3] = u_squares
         elif face_name == 'U':
             if direction == 1:
                 for _ in range(turns):
@@ -153,23 +153,19 @@ class Cube:
                     u_squares = self.faces['U'].squares[2:9:3]
                     f_squares = self.faces['F'].squares[2:9:3]
                     d_squares = self.faces['D'].squares[2:9:3]
-                    b_squares = reversed(self.faces['B'].squares[0:7:3])
+                    b_squares = self.faces['B'].squares[0:7:3]
                     self.faces['U'].squares[2:9:3] = f_squares
                     self.faces['F'].squares[2:9:3] = d_squares
                     self.faces['D'].squares[2:9:3] = b_squares
-                    self.faces['B'].squares[0] = u_squares[0]
-                    self.faces['B'].squares[3] = u_squares[1]
-                    self.faces['B'].squares[7] = u_squares[2]
+                    self.faces['B'].squares[0:7:3] = u_squares
             elif direction == -1:
                 for _ in range(turns):
                     u_squares = self.faces['U'].squares[2:9:3]
                     f_squares = self.faces['F'].squares[2:9:3]
                     d_squares = self.faces['D'].squares[2:9:3]
-                    b_squares = reversed(self.faces['B'].squares[0:7:3])
+                    b_squares = self.faces['B'].squares[0:7:3]
                     self.faces['U'].squares[2:9:3] = b_squares
-                    self.faces['B'].squares[0] = d_squares[8]
-                    self.faces['B'].squares[3] = d_squares[5]
-                    self.faces['B'].squares[7] = d_squares[2]
+                    self.faces['B'].squares[0:7:3] = d_squares
                     self.faces['D'].squares[2:9:3] = f_squares
                     self.faces['F'].squares[2:9:3] = u_squares
         elif face_name == 'L':
@@ -178,9 +174,9 @@ class Cube:
                     u_squares = self.faces['U'].squares[0:7:3]
                     f_squares = self.faces['F'].squares[0:7:3]
                     d_squares = self.faces['D'].squares[0:7:3]
-                    b_squares = self.faces['B'].squares[2:8:3]
+                    b_squares = self.faces['B'].squares[2:9:3]
                     self.faces['U'].squares[0:7:3] = b_squares
-                    self.faces['B'].squares[2:8:3] = d_squares
+                    self.faces['B'].squares[2:9:3] = d_squares
                     self.faces['D'].squares[0:7:3] = f_squares
                     self.faces['F'].squares[0:7:3] = u_squares
             elif direction == -1:
@@ -188,9 +184,9 @@ class Cube:
                     u_squares = self.faces['U'].squares[0:7:3]
                     f_squares = self.faces['F'].squares[0:7:3]
                     d_squares = self.faces['D'].squares[0:7:3]
-                    b_squares = self.faces['B'].squares[2:8:3]
+                    b_squares = self.faces['B'].squares[2:9:3]
                     self.faces['U'].squares[0:7:3] = f_squares
                     self.faces['F'].squares[0:7:3] = d_squares
                     self.faces['D'].squares[0:7:3] = b_squares
-                    self.faces['B'].squares[2:8:3] = u_squares
+                    self.faces['B'].squares[2:9:3] = u_squares
 
