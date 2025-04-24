@@ -5,7 +5,6 @@ class CubeSolver:
 
     def __init__(self):
         self.cube_string = "WWWWWWWWWGGGGGGGGGOOOOOOOOOYYYYYYYYYBBBBBBBBBRRRRRRRRR"
-
         self.cube = Cube(self.cube_string)
 
 
@@ -43,7 +42,7 @@ if __name__ == "__main__":
     print("Initial state:", solver.cube_string)
     print("face order: U R F D L B")
 
-    moves = ["F2"]
+    moves = ["R", "L", "F'", "R2"]
     for move in moves:
         print(f"Move {move}")
         solver.cube.move(move)
