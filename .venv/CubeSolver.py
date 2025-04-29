@@ -21,6 +21,11 @@ class CubeSolver:
                 for j, color in enumerate(cube_string[i * 3:(i + 1) * 3]):
                     self.cube.faces[face][i % 9][j] = color
 
+    def is_cube_solved(self):
+        if self.get_string() == "WWWWWWWWWGGGGGGGGGOOOOOOOOOYYYYYYYYYBBBBBBBBBRRRRRRRRR":
+            return True
+        return False
+
     def get_string(self) -> str:
         face_order = ['U', 'R', 'F', 'D', 'L', 'B']
         string = ""
@@ -62,8 +67,7 @@ class CubeSolver:
             ('L', 1, 'U'), ('L', 3, 'B'), ('L', 5, 'F'), ('L', 7, 'D'),
             ('D', 1, 'F'), ('D', 3, 'R'), ('D', 5, 'B'), ('D', 7, 'L')
         ]
-
-
+        pass
 
     def solve_white_corners(self):
         pass
