@@ -8,18 +8,8 @@ class CubeSolver:
         self.cube_string = "BWWWWWRWOGBRYGRGOWYOYROBRGRBOWYYYGBBORGGBBWGYBGYYRROOO"
         self.cube = Cube(self.cube_string)
         self.solution = []
-
-
-    # Sets up the cube based on the given string
-    def set_cube(self, cube_string: str):
-        if is_valid_cube(cube_string):
-            for i, face in enumerate(['U', 'R', 'F', 'D', 'L', 'B']):
-                for j, color in enumerate(['U', 'R', 'F']):
-                    self.cube.faces[face][i // 9][j] = color
-                for j, color in enumerate(['D', 'L', 'B']):
-                    self.cube.faces[face][(i + 27) // 9][j] = color
-                for j, color in enumerate(cube_string[i * 3:(i + 1) * 3]):
-                    self.cube.faces[face][i % 9][j] = color
+        self.move_set = ["U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2", "L", "L'", "L2", "R", "R'",
+                         "R2"]
 
     def is_cube_solved(self):
         if self.get_string() == "WWWWWWWWWGGGGGGGGGOOOOOOOOOYYYYYYYYYBBBBBBBBBRRRRRRRRR":
@@ -27,7 +17,7 @@ class CubeSolver:
         return False
 
     def get_string(self) -> str:
-        face_order = ['U', 'R', 'F', 'D', 'L', 'B']
+        face_order = ['U', 'D', 'L', 'R', 'F', 'B']
         string = ""
         for face in face_order:
             for i in range(3):
@@ -52,34 +42,75 @@ class CubeSolver:
         if self.is_cube_solved():
             return []
 
-        phase1_moves = self._solve_phase1()
+        phase1_moves = self.solve_phase1()
         if phase1_moves is None:
             return None
         self.execute_moves(phase1_moves)
 
-        phase2_moves = self._solve_phase2()
+        phase2_moves = self.solve_phase2()
         if phase2_moves is None:
             return None
         self.execute_moves(phase2_moves)
 
-        phase3_moves = self._solve_phase3()
+        phase3_moves = self.solve_phase3()
         if phase3_moves is None:
             return None
         self.execute_moves(phase3_moves)
 
-        phase4_moves = self._solve_phase4()
+        phase4_moves = self.solve_phase4()
         if phase4_moves is None:
             return None
         self.execute_moves(phase4_moves)
 
         return self.solution
 
+    def get_state_phase1(self, cube: Cube):
+        edge_orientation = ""
+        edges = [
+            ('U', 1, 'B'), ('U', 3, 'L'), ('U', 5, 'R'), ('U', 7, 'F'),
+            ('F', 1, 'U'), ('F', 3, 'L'), ('F', 5, 'R'), ('F', 7, 'D'),
+            ('R', 1, 'U'), ('R', 3, 'F'), ('R', 5, 'B'), ('R', 7, 'D'),
+            ('B', 1, 'U'), ('B', 3, 'R'), ('B', 5, 'L'), ('B', 7, 'D'),
+            ('L', 1, 'U'), ('L', 3, 'B'), ('L', 5, 'F'), ('L', 7, 'D'),
+            ('D', 1, 'F'), ('D', 3, 'R'), ('D', 5, 'B'), ('D', 7, 'L')
+        ]
+        for face, index, _ in edges:
+            edge_orientation += cube.faces[face].squares[index]
+        # Sort to handle different permutations
+        return tuple(sorted(edge_orientation))
+
+    def solve_phase1(self):
+        # Solves the cube to the G1 subgroup (all edges correctly oriented).
+        target_state = tuple(sorted("UUUUUUUUUDDDDDDDDDRRRRRRRRRLLLLLLLLLFFFFFFFFFBBBBBBBBB"))[:12]
+        current_state = self.get_state_phase1(self.cube)
+        if all(c in 'UDLRFB' for c in current_state):
+            return []
+
+        queue = deque([(Cube(self.get_string()), [])])
+        visited = {current_state}
+        allowed_moves = self.move_set
+
+        while queue:
+            current_cube, path = queue.popleft()
+            state = self.get_state_phase1(current_cube)
+            if all(c in 'UDLRFB' for c in state):
+                return path
+
+            for move in allowed_moves:
+                next_cube = Cube(current_cube.get_state_string())
+                next_cube.move(move)
+                next_state = self.get_state_phase1(next_cube)
+                if next_state not in visited:
+                    visited.add(next_state)
+                    new_path = path + [move]
+                    queue.append((next_cube, new_path))
+        return None
 
 
 if __name__ == "__main__":
     solver = CubeSolver()
     print("Initial state:", solver.cube_string)
-    print("face order: U R F D L B")
+    print("face order: U D L R F B")
 
     solver.solve_white_cross()
     print("Final state:", solver.cube_string)
