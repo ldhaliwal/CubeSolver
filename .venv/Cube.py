@@ -7,7 +7,7 @@ class Cube:
             print(len(state))
             raise ValueError("wrong input")
 
-        face_names = ['U', 'R', 'F', 'D', 'L', 'B']
+        face_names = ['U', 'D', 'L', 'R', 'F', 'B']
         self.faces = {}
         color_index = 0
         for face_name in face_names:
@@ -21,11 +21,11 @@ class Cube:
         return self.faces[face].get_grid()
 
     def get_affected_faces(self, face):
-        return [self.faces[n] for n in self.neighbors[face]]
+        return [self.faces[i] for i in self.neighbors[face]]
 
     def is_valid_cube(self) -> bool:
         from collections import Counter
-        flat = [c for face in self.faces.values() for row in face for c in row]
+        flat = [i for face in self.faces.values() for row in face for i in row]
         count = Counter(flat)
         return all(i == 9 for i in count.values()) and len(count) == 6
 
