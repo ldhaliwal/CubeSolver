@@ -28,12 +28,11 @@ class CubeSolver:
             ('D', 0, 'F', 'L'), ('D', 2, 'R', 'F'), ('D', 6, 'L', 'B'), ('D', 8, 'B', 'R')
         ]
 
-        # Pre-compute move transitions for each phase (heavily reduces computation time)
         self.phase1_moves = ["U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2", "L", "L'", "L2", "R",
                              "R'", "R2"]
-        self.phase2_moves = ["U", "U'", "U2", "D", "D'", "D2", "F2", "B2", "L", "L'", "L2", "R", "R'", "R2"]
-        self.phase3_moves = ["U", "U'", "U2", "D", "D'", "D2", "F2", "B2", "L2", "R2"]
-        self.phase4_moves = ["U2", "D2", "F2", "B2", "L2", "R2"]
+        self.phase2_moves = ["U", "U'", "U2", "D", "D'", "D2", "F2", "B2", "L2", "R2"]
+        self.phase3_moves = ["U2", "D2", "F2", "B2", "L2", "R2"]
+        self.phase4_moves = ["U2", "D2", "L2", "R2"]
 
         self.move_pruning = {
             # Avoid applying the same move twice, or doing inverse moves back-to-back
@@ -45,7 +44,7 @@ class CubeSolver:
             'R': ['R', 'R2'], 'R2': ['R', 'R2', "R'"], 'R\'': ['R\'', 'R2']
         }
 
-        # Pattern databases for heuristics (simplified version)
+        # Pattern databases for heuristics
         self.edge_orientation_db = {}
 
         self.states_checked = 0
@@ -80,7 +79,6 @@ class CubeSolver:
             self.solution.append(move)
 
     def optimize_move_sequence(self, moves):
-        """Optimize a sequence of moves by eliminating redundancies"""
         if not moves:
             return []
 
@@ -180,7 +178,7 @@ class CubeSolver:
         initial_cube = Cube(self.get_string())
         initial_state = self.get_state_phase1(initial_cube)
 
-        # Target state: all edges correctly oriented (0)
+        # Target state is that all edges correctly oriented (state method will return 0)
         target_state = 0
 
         if initial_state == target_state:
