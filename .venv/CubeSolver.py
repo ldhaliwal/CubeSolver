@@ -6,9 +6,9 @@ class CubeSolver:
 
 
 
-    def __init__(self):
+    def __init__(self, cube_string):
         # Test Case
-        self.cube_string = "WRWGWROBWYGWRYOBOYOYYYBYRBBGYRRGWGBGGWOBOWOORBGBGRORWY"
+        self.cube_string = cube_string
         self.cube = Cube(self.cube_string)
         self.solution = []
         self.move_set = ["U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2", "L", "L'", "L2", "R", "R'",
@@ -162,6 +162,7 @@ class CubeSolver:
             is_flipped = False
             if home_face in ['U', 'D']:
                 # U or D color should be on U or D face
+                # TODO: should this be flipped ?
                 is_flipped = face not in ['U', 'D']
             elif home_face in ['F', 'B']:
                 # F or B color should be on F or B face
@@ -498,7 +499,9 @@ class CubeSolver:
         return None
 
 if __name__ == "__main__":
-    solver = CubeSolver()
+    cube_string = input("Enter cube string: ")
+
+    solver = CubeSolver(cube_string)
     print("Initial state:", solver.cube_string)
     print("face order: U D L R F B")
 
@@ -506,12 +509,7 @@ if __name__ == "__main__":
 
     print(solution)
 
-    # Test Case
-    # moves = ["R", "L", "F'", "R2"]
-    # for move in moves:
-    #     print(f"Move {move}")
-    #     solver.cube.move(move)
-    #     print(f"After move {move}:", solver.get_grid())
+
 
 
     
