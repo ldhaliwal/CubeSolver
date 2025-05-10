@@ -4,8 +4,6 @@ from collections import deque
 
 class CubeSolver:
 
-
-
     def __init__(self, cube_string):
         # Test Case
         self.cube_string = cube_string
