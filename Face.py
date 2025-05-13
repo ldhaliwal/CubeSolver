@@ -15,6 +15,10 @@ class Face:
     def set_cell(self, index1, index2, value):
         self.grid[index1][index2] = value
 
+        # Update squares list when grid is modified
+        index = index1 * 3 + index2
+        self.squares[index] = value
+
     def rotate(self, clockwise=True):
         if clockwise:
             self.grid = [list(row) for row in zip(*self.grid[::-1])]

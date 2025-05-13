@@ -20,9 +20,6 @@ class Cube:
     def get_face(self, face):
         return self.faces[face].get_grid()
 
-    def get_affected_faces(self, face):
-        return [self.faces[i] for i in self.neighbors[face]]
-
     def get_state_string(self):
         state_string = ""
         for face_name in ['U', 'R', 'F', 'D', 'L', 'B']:
